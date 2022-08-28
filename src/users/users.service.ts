@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserInput } from './dto/create-user.input';
@@ -11,6 +11,7 @@ export class UsersService {
 
   async create(createUserInput: CreateUserInput): Promise<User> {
     let user: User = this.userRepository.create(createUserInput);
+    user.role = 'user'
     return this.userRepository.save(user);
   }
 
@@ -22,7 +23,11 @@ export class UsersService {
     return this.userRepository.findOne({ where: { username } })
   }
 
-  findByUsername(username: string): Promise<any> {
-    return this.userRepository.findOne({ where: { username } })
+  async findByUsername(username: string): Promise<any> {
+    const user = await this.userRepository.findOne({ where: { username } })
+    if (!user) {
+      throw new NotFoundException("user with given username not found!")
+    }
+    return user
   }
 }

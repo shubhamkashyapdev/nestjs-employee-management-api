@@ -1,10 +1,11 @@
 import { Resolver, Query, Mutation, Args, Int, Context } from '@nestjs/graphql';
 import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
-import { CreateUserInput } from './dto/create-user.input';
-import { UpdateUserInput } from './dto/update-user.input';
-import { UseGuards } from '@nestjs/common';
+import { HttpException, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RolesGuard } from '../auth/auth-role.guard';
+import { Roles } from '../auth/role.decorator';
+
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -13,24 +14,25 @@ export class UsersResolver {
   //@todo - restricted
   @Query(() => [User], { name: 'getAllUsers' })
   @UseGuards(JwtAuthGuard)
-  findAll() {
+  findAll(@Context('req') req) {
     return this.usersService.findAll();
   }
 
+  //@todo: restricted (ADMIN)
   @Query(() => User, { name: 'getUserByUsername' })
   @UseGuards(JwtAuthGuard)
   findOne(@Args('username') username: string) {
-    return this.usersService.findOne(username);
+    return this.usersService.findByUsername(username);
   }
 
   @Query(() => User, { name: 'getCurrentUser' })
   @UseGuards(JwtAuthGuard)
-  findCurrentUser(@Context() context) {
+  findCurrentUser(@Context('req') req) {
     //@todo - get current user details
-    console.log({ user: context.user, body: context.body, })
-    return {
-      id: "123",
-      username: "dummy",
+    const user = req.user
+    if (!user) {
+      throw new HttpException('User does not exists!', 400);
     }
+    return this.usersService.findByUsername(user.username)
   }
 }

@@ -7,6 +7,9 @@ export class User {
   @Field()
   @PrimaryGeneratedColumn('uuid')
   id: string;
+  @Field({ defaultValue: 'user' })
+  @Column()
+  role?: string; //@todo - multiple role 
   @Field()
   @Column()
   username: string;
