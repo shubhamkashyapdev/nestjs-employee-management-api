@@ -19,10 +19,24 @@ type Project {
   employees: [Employee!]
 }
 
+type User {
+  id: String!
+  username: String!
+  password: String!
+}
+
+type LoginResponse {
+  access_token: String!
+  user: User!
+}
+
 type Query {
   getAllEmployees: [Employee!]!
   getAllProjects: [Project!]!
   getProject(id: String!): Project!
+  getAllUsers: [User!]!
+  getUserByUsername(username: String!): User!
+  getCurrentUser: User!
 }
 
 type Mutation {
@@ -30,6 +44,8 @@ type Mutation {
   createProject(createProjectInput: CreateProjectInput!): Project!
   updateProject(updateProject: UpdateProjectInput!): Project!
   removeProject(id: String!): Project!
+  login(loginUserInput: LoginUserInput!): LoginResponse!
+  addNewUser(userInput: CreateUserInput!): User!
 }
 
 input EmployeeCreateDTO {
@@ -49,4 +65,14 @@ input UpdateProjectInput {
   name: String!
   code: Int!
   id: String!
+}
+
+input LoginUserInput {
+  username: String!
+  password: String!
+}
+
+input CreateUserInput {
+  username: String!
+  password: String!
 }
