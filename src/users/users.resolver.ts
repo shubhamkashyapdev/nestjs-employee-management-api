@@ -1,10 +1,11 @@
 import { Resolver, Query, Mutation, Args, Int, Context } from '@nestjs/graphql';
 import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
-import { HttpException, UseGuards } from '@nestjs/common';
+import { HttpException, NotFoundException, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { RolesGuard } from '../auth/auth-role.guard';
+import { Role } from './role.enum'
 import { Roles } from '../auth/role.decorator';
+import { RolesGuard } from '../auth/auth-role.guard';
 
 
 @Resolver(() => User)
@@ -18,11 +19,12 @@ export class UsersResolver {
     return this.usersService.findAll();
   }
 
-  //@todo: restricted (ADMIN)
   @Query(() => User, { name: 'getUserByUsername' })
   @UseGuards(JwtAuthGuard)
-  findOne(@Args('username') username: string) {
-    return this.usersService.findByUsername(username);
+  async findOne(@Args('username') username: string) {
+    const userData = await this.usersService.findByUsernameE(username);
+
+    return userData;
   }
 
   @Query(() => User, { name: 'getCurrentUser' })
@@ -30,9 +32,16 @@ export class UsersResolver {
   findCurrentUser(@Context('req') req) {
     //@todo - get current user details
     const user = req.user
-    if (!user) {
-      throw new HttpException('User does not exists!', 400);
-    }
-    return this.usersService.findByUsername(user.username)
+    const userData = this.usersService.findByUsernameE(user.username)
+
+    return userData;
+  }
+
+  @Query(() => User, { name: 'getUserPassword' })
+  @Roles(Role.ADMIN, Role.USER)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async getUserPassword(@Args('username') username: string) {
+    const user = await this.usersService.findByUsername(username);
+    return user;
   }
 }

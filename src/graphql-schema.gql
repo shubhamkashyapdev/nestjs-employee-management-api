@@ -38,6 +38,7 @@ type Query {
   getAllUsers: [User!]!
   getUserByUsername(username: String!): User!
   getCurrentUser: User!
+  getUserPassword(username: String!): User!
 }
 
 type Mutation {
@@ -46,7 +47,7 @@ type Mutation {
   updateProject(updateProject: UpdateProjectInput!): Project!
   removeProject(id: String!): Project!
   login(loginUserInput: LoginUserInput!): LoginResponse!
-  addNewUser(userInput: CreateUserInput!): User!
+  signup(userInput: CreateUserInput!): User!
 }
 
 input EmployeeCreateDTO {
