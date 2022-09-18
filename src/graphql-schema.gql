@@ -2,6 +2,14 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Location {
+  id: String!
+  name: String!
+  longitude: String
+  latitude: String
+  employees: [Employee!]!
+}
+
 type Employee {
   id: String!
   firstName: String!
@@ -9,7 +17,9 @@ type Employee {
   designation: String!
   city: String
   project: Project!
+  location: Location!
   projectId: String!
+  locationId: String!
 }
 
 type Project {
@@ -35,6 +45,8 @@ type Query {
   getAllEmployees: [Employee!]!
   getAllProjects: [Project!]!
   getProject(id: String!): Project!
+  getAllLocation: [Location!]!
+  findLocationById(id: String!): Location!
   getAllUsers: [User!]!
   getUserByUsername(username: String!): User!
   getCurrentUser: User!
@@ -46,6 +58,7 @@ type Mutation {
   createProject(createProjectInput: CreateProjectInput!): Project!
   updateProject(updateProject: UpdateProjectInput!): Project!
   removeProject(id: String!): Project!
+  createLocation(location: LocationCreateDTO!): Location!
   login(loginUserInput: LoginUserInput!): LoginResponse!
   signup(userInput: CreateUserInput!): User!
 }
@@ -56,6 +69,7 @@ input EmployeeCreateDTO {
   designation: String!
   city: String
   projectId: String!
+  locationId: String!
 }
 
 input CreateProjectInput {
@@ -67,6 +81,12 @@ input UpdateProjectInput {
   name: String!
   code: Int!
   id: String!
+}
+
+input LocationCreateDTO {
+  name: String!
+  longitude: String
+  latitude: String
 }
 
 input LoginUserInput {

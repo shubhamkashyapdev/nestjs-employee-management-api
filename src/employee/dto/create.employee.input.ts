@@ -13,4 +13,6 @@ export class EmployeeCreateDTO {
     city?: string;
     @Field()
     projectId: string;
+    @Field()
+    locationId: string;
 }

@@ -7,6 +7,7 @@ import { EmployeeModule } from './employee/employee.module';
 import { ProjectModule } from './project/project.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { LocationModule } from './location/location.module';
 
 @Module({
   imports: [EmployeeModule, GraphQLModule.forRoot<ApolloDriverConfig>({
@@ -21,7 +22,7 @@ import { AuthModule } from './auth/auth.module';
     database: 'employee',
     entities: [`dist/**/*.entity{.ts,.js}*`],
     synchronize: true, // only in dev environment
-  }), ProjectModule, UsersModule, AuthModule],
+  }), ProjectModule, UsersModule, AuthModule, LocationModule],
   controllers: [],
   providers: [],
 })
